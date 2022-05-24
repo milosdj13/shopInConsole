@@ -1,0 +1,146 @@
+import mysql.connector as con
+
+
+# Connecting to mysql
+try:
+    db = con.connect(
+        host = "localhost",
+        user = "",  #enter your username
+        passwd = "" #enter your password
+    )
+    print("\nConnected to mysql")
+except Exception as e:
+    print("\nFailed to connect")
+    print(e)
+
+
+# Creating a database
+try:
+    myCursor = db.cursor()
+    myCursor.execute("CREATE DATABASE project")
+    print("\nProject database has been created")
+except Exception as e:
+    print("\nFailed to create database")
+    print(e)
+
+
+# Connecting to database
+try:
+    db1 = con.connect(
+        host = "localhost",
+        user = "",      #enter your username
+        passwd = "",    #enter your password
+        database = "project"
+    )
+    print("\nConnected to the project database")
+except Exception as e:
+    print("\nFailed to connect to project database")
+    print(e)
+    
+
+
+
+
+# Creating tables in database
+# Employee
+try:
+    #                   buffered=True - ako fetchujem vise
+    myCursor = db1.cursor()
+    myCursor.execute("CREATE TABLE Employee (id INT AUTO_INCREMENT PRIMARY KEY, userName VARCHAR(50) NOT NULL UNIQUE, password VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL UNIQUE)")
+    print("\nTable Employee created!")
+except Exception as e:
+    print("\nFailed to create Employee table in database")
+    print(e)
+
+# Customer
+try:
+    myCursor.execute("CREATE TABLE Customer (id INT AUTO_INCREMENT PRIMARY KEY, userName VARCHAR(50) NOT NULL UNIQUE, password VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL UNIQUE, gender VARCHAR(50), money DOUBLE)")
+    print("\nTable Customer created!")
+except Exception as e:
+    print("\nFailed to create Customer table in database")
+    print(e)
+
+# Article
+try:
+    myCursor.execute("CREATE TABLE Article (id INT AUTO_INCREMENT PRIMARY KEY, brand VARCHAR(50) NOT NULL, model VARCHAR(50) NOT NULL, type VARCHAR(50) NOT NULL, price DOUBLE NOT NULL, quantity INT NOT NULL, size VARCHAR(10) NOT NULL )")
+    print("\nTable Article created!")
+except Exception as e:
+    print("\nFailed to create Article table in database")
+    print(e)
+
+# Bill
+try:
+    myCursor.execute("CREATE TABLE Bill (id INT AUTO_INCREMENT PRIMARY KEY, totalPrice DOUBLE NOT NULL, customerId INT NOT NULL, articleId INT NOT NULL , FOREIGN KEY (customerId) REFERENCES Customer(id), FOREIGN KEY (articleId)REFERENCES Article(id))")
+    print("\nTable Bill created!")
+except Exception as e:
+    print("\nFailed to create Bill table in database")
+    print(e)
+
+
+
+# Adding rows in tables
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# everything MUST BE %s, or error "Not all parameters were used in the SQL statement"
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# # Employee
+try:
+    query = "INSERT INTO Employee (userName, password, email) VALUES (%s, %s, %s)"
+    vals = [("admin1", "admin123", "admin1@gmail.com"),
+        ("admin2", "admin123", "admin2@gmail.com"),
+        ("admin3", "admin123", "admin3@gmail.com")]
+
+    myCursor.executemany(query, vals)
+    db1.commit()
+    print(myCursor.rowcount, "Employees added!")
+except Exception as e:
+    print("\nFailed to add employees")
+    print(e)
+
+
+
+# Customer
+try:
+    query = "INSERT INTO Customer (userName, password, email, gender, money) VALUES (%s, %s, %s,%s, %s)"
+    vals = [("customer", "customer123", "customer1@gmail.com", "M", 100.00),
+        ("customer2", "customer123", "customer2@gmail.com", "F", 123.45),
+        ("customer3", "customer123", "customer3@gmail.com", "M", 212.33)]
+
+    myCursor.executemany(query, vals)
+    db1.commit()
+    print(myCursor.rowcount, "Customers added!")
+except Exception as e:
+    print("\nFailed to add customers")
+    print(e)
+
+
+
+
+# Article
+try:
+    query = "INSERT INTO Article (brand, model, type, price, quantity, size) VALUES (%s, %s, %s, %s, %s, %s)"
+    vals = [("nike", "air max", "shoes", 100, 7, '40'),
+        ("adidas", "predator", "shoes", 110, 3, '39'),
+        ("puma", "something", "shirt", 40, 10, 'M')]
+
+    myCursor.executemany(query, vals)
+    db1.commit()
+    print(myCursor.rowcount, "Articles added!")
+except Exception as e:
+    print("\nFailed to add articles")
+    print(e)
+
+
+# Bill
+try:
+    query = "INSERT INTO Bill (totalPrice, customerId, articleId) VALUES (%s, %s, %s)"
+    vals = [(300, 2, 3),
+        ( 200, 1, 1),
+        (400, 3, 2)]
+
+    myCursor.executemany(query, vals)
+    db1.commit()
+    print(myCursor.rowcount, "Bills added!")
+except Exception as e:
+    print("\nFailed to add Bills")
+    print(e)
+
