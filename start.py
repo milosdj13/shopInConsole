@@ -4,7 +4,6 @@ from createDb import *
 
 
 def start():
-    
     print ("\n\n Welcome to our shop!:")
     print("==========================")
 
@@ -16,7 +15,6 @@ def start():
     elif (option == "3"):
         createAccCustomer()
         start()
-        print("make acc for customer")
     elif (option == "4"):
         showArticles()
     elif (option == "5"):
@@ -34,7 +32,7 @@ def pickOptionStart():
 
 
 def showStartMenu():
-    print ("    1 - Log in as admin")
+    print ("    1 - Log in as employee")
     print ("    2 - Log in as customer")
     print ("    3 - Create new account (customers only)")
     print ("    4 - See our articles")
@@ -54,8 +52,8 @@ def logInEmployee():
         try:
             # username is in [] because i need to pass list in SQL query 
             myCursor.execute("SELECT password FROM Employee WHERE userName = %s", [userName])
-            userDb = myCursor.fetchone()
-            if userDb[0] == password:
+            passDb = myCursor.fetchone()
+            if passDb[0] == password:
                 isFound = True
                 print("\n Welcome back "+userName)
             else:
@@ -96,11 +94,9 @@ def showEmployeeOptions():
 
 def pickedEmployee(picked):
     if picked == "1":
-        print("\nMake new account for employee")
         addNewEmployee()
     if picked == "2":
         addNewArticle()
-        print("Add new article")
     if picked == "3":
         print("Show graph")
     if picked == "4":
@@ -127,14 +123,31 @@ def addNewEmployee():
         db1.commit()
         print(userName + " account successfully made!")
     except Exception as e:
-        print("\n Couldnt add new employee")
+        print("\nSomething went wrong. Couldnt add new employee!")
         print(e)
 
 
 
 
 def addNewArticle():
-    print("Need to finish this")
+    print("\n\nPlease enter informations about new article")
+    brand = input("Brand : ")
+    model = input("Model : ")
+    type = input("Type : ")
+    price = input("Price : ")
+    quantity = input("Quantity : ")
+    size = input("Size : ")
+
+    try:
+        query ="INSERT INTO Article(brand, model, type, price, quantity, size) VALUES (%s,%s,%s,%s,%s,%s)"
+        queryVals = (brand, model, type, price, quantity, size)
+        
+        myCursor.execute(query, queryVals)
+        db1.commit()
+        print(" Article successfully added!")
+    except Exception as e:
+        print("\nSomething went wrong! Couldn't add new article!")
+        print(e)
 
 
 
@@ -157,8 +170,8 @@ def logInCustomer():
         try:
             # username is in [] because i need to pass list in SQL query 
             myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
-            userDb = myCursor.fetchone()
-            if userDb[0] == password:
+            passDb = myCursor.fetchone()
+            if passDb[0] == password:
                 isFound = True
                 print("\n Welcome back "+userName)
             else:
@@ -174,8 +187,6 @@ def logInCustomer():
 
 
 
-
-
 def customerOptions():
     showCustomerOptions()
     option = input("Pick option:  ")
@@ -187,33 +198,98 @@ def customerOptions():
 
 
 
-
-
 def showCustomerOptions():
-    print("showing customer options")
-
-
+    print("\nType in number based off of what you want to do: ")
+    print("  1 - Show articles")
+    print("  2 - Show my purchases")
+    print("  3 - See my balance")
+    print("  4 - Log out")
+    print("  5 - Exit program")
 
 
 
 
 def pickedCustomer(picked):
     if picked == "1":
-        print("option 1")
-    if picked == "2":
-        print("option 2")
-    if picked == "3":
-        print("option 3")
-    if picked == "4":
-        print("option 4")
+        showArticles()
+    elif picked == "2":
+        showMyPurchases()
+    elif picked == "3":
+        seeMyBalance()
+    elif picked == "4":
+        print("Logging out....")
+        start()
+    elif picked == "5":
+        print("Exiting program....")
+        exit()
+        
         
 
 
 
+def showMyPurchases():
+    print("Please confirm your username and password!")
+    isFound = False
+    while (isFound == False):
+        userName = input("Username : ")
+        password = input("Password : ")
+        print("============================")
+        try:
+            # username is in [] because i need to pass list in SQL query 
+            myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
+            passDb = myCursor.fetchone()
+            if passDb[0] == password:
+                isFound = True
+                print("\nAuthentification confirmed! You can see your purchases below: ")
+                idCust = getId(userName)
+                myCursor.execute("SELECT totalPrice FROM Bill WHERE customerId = %s", idCust)
+                purchases = myCursor.fetchall()
+                for i in purchases:
+                    print(i)
+            else:
+                print("\nWrong username/password! Try again!")
+        except Exception as e:
+            print("\nSorry, something went wrong!")
+            print(e)
+
+
+
+def getId(userName):
+    try:
+        # username is in [] because i need to pass list in SQL query 
+        myCursor.execute("SELECT id FROM Customer WHERE userName = %s", [userName])
+        id = myCursor.fetchone()
+        return id
+    except Exception as e:
+        print("\nWe are sorry, something went wrong!")
+        print(e)
 
 
 
 
+
+def seeMyBalance():
+    print("Please confirm your username and password!")
+    isFound = False
+    while (isFound == False):
+        userName = input("Username : ")
+        password = input("Password : ")
+        print("============================")
+        try:
+            # username is in [] because i need to pass list in SQL query 
+            myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
+            passDb = myCursor.fetchone()
+            if passDb[0] == password:
+                isFound = True
+                print("\nAuthentification confirmed! You can see your balance below: ")
+                myCursor.execute("SELECT money FROM Customer WHERE userName = %s", [userName])
+                balance = myCursor.fetchone()
+                print(balance[0])
+            else:
+                print("\nWrong username/password! Try again!")
+        except Exception as e:
+            print("\nSorry, something went wrong!")
+            print(e)
 
 
 

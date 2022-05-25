@@ -16,7 +16,7 @@ except Exception as e:
 
 # Creating a database
 try:
-    myCursor = db.cursor()
+    myCursor = db.cursor(buffered=True)
     myCursor.execute("CREATE DATABASE project")
     print("\nProject database has been created")
 except Exception as e:
@@ -45,7 +45,7 @@ except Exception as e:
 # Employee
 try:
     #                   buffered=True - for fetches
-    myCursor = db1.cursor()
+    myCursor = db1.cursor(buffered=True)
     myCursor.execute("CREATE TABLE Employee (id INT AUTO_INCREMENT PRIMARY KEY, userName VARCHAR(50) NOT NULL UNIQUE, password VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL UNIQUE)")
     print("\nTable Employee created!")
 except Exception as e:
