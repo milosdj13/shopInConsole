@@ -85,12 +85,13 @@ except Exception as e:
 # # Employee
 try:
     query = "INSERT INTO Employee (userName, password, email) VALUES (%s, %s, %s)"
-    vals = [("admin1", "admin123", "admin1@gmail.com"),
-        ("admin2", "admin123", "admin2@gmail.com"),
-        ("admin3", "admin123", "admin3@gmail.com")]
+    vals = [("admin1", "admin1123", "admin1@gmail.com"),
+        ("admin2", "admin2123", "admin2@gmail.com"),
+        ("admin3", "admin3123", "admin3@gmail.com")]
 
     myCursor.executemany(query, vals)
     db1.commit()
+    print()
     print(myCursor.rowcount, "Employees added!")
 except Exception as e:
     print("\nFailed to add employees")
@@ -101,12 +102,13 @@ except Exception as e:
 # Customer
 try:
     query = "INSERT INTO Customer (userName, password, email, gender, money) VALUES (%s, %s, %s,%s, %s)"
-    vals = [("customer", "customer123", "customer1@gmail.com", "M", 100.00),
-        ("customer2", "customer123", "customer2@gmail.com", "F", 123.45),
-        ("customer3", "customer123", "customer3@gmail.com", "M", 212.33)]
+    vals = [("customer1", "customer1123", "customer1@gmail.com", "M", 100.00),
+        ("customer2", "customer2123", "customer2@gmail.com", "F", 123.45),
+        ("customer3", "customer3123", "customer3@gmail.com", "M", 212.33)]
 
     myCursor.executemany(query, vals)
     db1.commit()
+    print()
     print(myCursor.rowcount, "Customers added!")
 except Exception as e:
     print("\nFailed to add customers")
@@ -124,6 +126,7 @@ try:
 
     myCursor.executemany(query, vals)
     db1.commit()
+    print()
     print(myCursor.rowcount, "Articles added!")
 except Exception as e:
     print("\nFailed to add articles")
@@ -139,6 +142,7 @@ try:
 
     myCursor.executemany(query, vals)
     db1.commit()
+    print()
     print(myCursor.rowcount, "Bills added!")
 except Exception as e:
     print("\nFailed to add Bills")
