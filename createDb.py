@@ -44,7 +44,7 @@ except Exception as e:
 # Creating tables in database
 # Employee
 try:
-    #                   buffered=True - ako fetchujem vise
+    #                   buffered=True - for fetches
     myCursor = db1.cursor()
     myCursor.execute("CREATE TABLE Employee (id INT AUTO_INCREMENT PRIMARY KEY, userName VARCHAR(50) NOT NULL UNIQUE, password VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL UNIQUE)")
     print("\nTable Employee created!")

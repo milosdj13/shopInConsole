@@ -1,5 +1,5 @@
 from createDb import *
-# ovo pravi pycache folder
+
 # ADD USERNAME AND PASSWORD IN createDb.py
 
 
@@ -14,11 +14,13 @@ def start():
     elif(option == "2"):
         logInCustomer()
     elif (option == "3"):
+        createAccCustomer()
+        start()
         print("make acc for customer")
     elif (option == "4"):
-        print("show products")
+        showArticles()
     elif (option == "5"):
-        print("exit")
+        exit()
             
 
 def pickOptionStart():
@@ -35,7 +37,7 @@ def showStartMenu():
     print ("    1 - Log in as admin")
     print ("    2 - Log in as customer")
     print ("    3 - Create new account (customers only)")
-    print ("    4 - See our products")
+    print ("    4 - See our articles")
     print ("    5 - Exit")
 
 
@@ -62,8 +64,9 @@ def logInEmployee():
             print("\nWrong username! Try again")
             print(e)
     
-    picked = employeeOptions()
-    pickedEmployee(picked)
+    while(True):
+        picked = employeeOptions()
+        pickedEmployee(picked)
 
 
 
@@ -93,16 +96,51 @@ def showEmployeeOptions():
 
 def pickedEmployee(picked):
     if picked == "1":
-        print("Picked 1")
+        print("\nMake new account for employee")
+        addNewEmployee()
     if picked == "2":
-        print("Picked 2")
+        addNewArticle()
+        print("Add new article")
     if picked == "3":
-        print("Picked 3")
+        print("Show graph")
     if picked == "4":
-        print("Picked 4")
+        print("Logging out....")
+        start()
     if picked == "5":
-        print("Picked 5")
+        print("Exiting program....")
+        exit()
         
+
+
+
+
+def addNewEmployee():
+    print("\n\nPlease enter informations about new employee")
+    userName = input("Username : ")
+    password = input("Password : ")
+    email = input("Email : ")
+
+    try:
+        query ="INSERT INTO Employee(userName, password, email) VALUES (%s,%s,%s)"
+        queryVals = (userName, password, email)
+        myCursor.execute(query, queryVals)
+        db1.commit()
+        print(userName + " account successfully made!")
+    except Exception as e:
+        print("\n Couldnt add new employee")
+        print(e)
+
+
+
+
+def addNewArticle():
+    print("Need to finish this")
+
+
+
+
+
+
 
 
 
@@ -128,9 +166,10 @@ def logInCustomer():
         except Exception as e:
             print("\nWrong username! Try again")
             print(e)
-    
-    picked =customerOptions()
-    pickedCustomer(picked)
+            
+    while(True):
+        picked =customerOptions()
+        pickedCustomer(picked)
 
 
 
@@ -169,6 +208,50 @@ def pickedCustomer(picked):
         print("option 4")
         
 
+
+
+
+
+
+
+
+
+
+
+
+def createAccCustomer():
+    print("\n\nPlease enter your informations!")
+    userName = input("Username : ")
+    password = input("Password : ")
+    email = input("Email : ")
+    gender = input("Gender: ")
+    money = input("How much money do you want to put on your account: ")
+    try:
+        query ="INSERT INTO Customer(userName, password, email, gender, money) VALUES (%s,%s,%s,%s,%s)"
+        queryVals = (userName, password, email, gender, money)
+        myCursor.execute(query, queryVals)
+        db1.commit()
+        print(userName + " account successfully made!")
+    except Exception as e:
+        print("\n Couldn't create account. Try again!")
+        print(e)
+
+
+
+
+
+
+
+def showArticles():
+    try:
+        myCursor.execute("SELECT * FROM Article")
+        articles = myCursor.fetchall()
+        for i in articles:
+            print(f"\nItem number: {i[0]}, brand:{i[1]}, model:{i[2]}, type:{i[3]}, price:{i[4]}, quantity: {i[5]}, size: {i[6]}")
+    
+    except Exception as e:
+        print("\nSomething went wrong! Couldn't read articles")
+        print(e)
 
 
 
