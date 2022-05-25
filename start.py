@@ -3,6 +3,9 @@ from createDb import *
 # ADD USERNAME AND PASSWORD IN createDb.py
 
 
+
+
+
 def start():
     print ("\n\n Welcome to our shop!:")
     print("==========================")
@@ -17,6 +20,7 @@ def start():
         start()
     elif (option == "4"):
         showArticles()
+        start()
     elif (option == "5"):
         exit()
             
@@ -40,6 +44,15 @@ def showStartMenu():
 
 
 
+
+# ======================================   EMPLOYEE    ================================================
+# ======================================   EMPLOYEE    ================================================
+# ======================================   EMPLOYEE    ================================================
+# ======================================   EMPLOYEE    ================================================
+# ======================================   EMPLOYEE    ================================================
+# ======================================   EMPLOYEE    ================================================
+# ======================================   EMPLOYEE    ================================================
+# ======================================   EMPLOYEE    ================================================
 
 def logInEmployee():
     print("\n\n---Welcome to the Employee logIn---")
@@ -152,12 +165,15 @@ def addNewArticle():
 
 
 
-
-
-
-
-
-
+# ======================================   CUSTOMER    ================================================
+# ======================================   CUSTOMER    ================================================
+# ======================================   CUSTOMER    ================================================
+# ======================================   CUSTOMER    ================================================
+# ======================================   CUSTOMER    ================================================
+# ======================================   CUSTOMER    ================================================
+# ======================================   CUSTOMER    ================================================
+# ======================================   CUSTOMER    ================================================
+# ======================================   CUSTOMER    ================================================
 
 def logInCustomer():
     print("\n\n---Welcome to the Customer logIn---")
@@ -190,7 +206,7 @@ def logInCustomer():
 def customerOptions():
     showCustomerOptions()
     option = input("Pick option:  ")
-    while option not in ("1", "2", "3", "4", "5"):
+    while option not in ("1", "2", "3", "4", "5", "6"):
         print ("\n ERROR! You picked invalid option.")
         showCustomerOptions()
         option = input("Pick valid option: ")
@@ -203,8 +219,9 @@ def showCustomerOptions():
     print("  1 - Show articles")
     print("  2 - Show my purchases")
     print("  3 - See my balance")
-    print("  4 - Log out")
-    print("  5 - Exit program")
+    print("  4 - Buy something")
+    print("  5 - Log out")
+    print("  6 - Exit program")
 
 
 
@@ -217,9 +234,11 @@ def pickedCustomer(picked):
     elif picked == "3":
         seeMyBalance()
     elif picked == "4":
+        buySomething()
+    elif picked == "5":
         print("Logging out....")
         start()
-    elif picked == "5":
+    elif picked == "6":
         print("Exiting program....")
         exit()
         
@@ -295,6 +314,94 @@ def seeMyBalance():
 
 
 
+def buySomething():
+    print("\n\nThis is the list of our available articles: ")
+    articles =showArticles()
+    option = input(" Enter the number of the article you want to buy: ")
+
+    while int(option) not in range(1, len(articles)+1):
+        print ("\n ERROR! You picked invalid option.")
+        showArticles()
+        option = input("Pick valid option: ")
+
+    makePurchase(option)
+
+
+
+
+
+
+
+def makePurchase(option):
+    print("Please confirm your username and password!")
+    isFound = False
+    while (isFound == False):
+        userName = input("Username : ")
+        password = input("Password : ")
+        print("============================")
+        try:
+            myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
+            passDb = myCursor.fetchone()
+            if passDb[0] == password:
+                isFound = True
+                print("\nAuthentification confirmed! We are looking for article and then we will make a bill... ")
+                
+                
+                myCursor.execute("SELECT * FROM Article WHERE id = %s", [option])
+                article = myCursor.fetchone()
+
+                myCursor.execute("SELECT * FROM Customer WHERE userName = %s", [userName])
+                user = myCursor.fetchone()
+
+                updateTables(article, user)
+            else:
+                print("\nWrong username/password! Try again!")
+        except Exception as e:
+            print("\nSorry, something went wrong!")
+            print(e)
+
+
+
+
+
+
+def updateTables(article, user):
+    if int(article[4]) > int(user[5]):
+        print("YOU DONT HAVE ENOUGH FUNDS FOR THIS TRANSACTION!")
+    elif int(article[5]) < 1:
+        print("Sorry, currently no items in storage!")
+    else:
+        try:
+            quan = article[5]
+            idArticle=article[0]
+            myCursor.execute("UPDATE Article SET quantity=%s WHERE id = %s", (quan-1, idArticle))
+            db1.commit()
+
+            money = user[5] - article[4]
+            idUser = user[0]
+            myCursor.execute("UPDATE Customer SET money='%s' WHERE id = %s", (money, idUser))
+            db1.commit()
+
+            query = "INSERT INTO Bill (totalPrice, customerId, articleId) VALUES (%s, %s, %s)"
+            vals = (article[4], user[0], article[0])
+
+            myCursor.execute(query, vals)
+            db1.commit()
+
+            print("\nARTICLE PAID SUCCESSFULLY")
+        except Exception as e:
+            print("\n\nSomething failed")
+            print(e)
+
+
+
+
+
+
+
+
+
+
 def createAccCustomer():
     print("\n\nPlease enter your informations!")
     userName = input("Username : ")
@@ -315,16 +422,13 @@ def createAccCustomer():
 
 
 
-
-
-
 def showArticles():
     try:
         myCursor.execute("SELECT * FROM Article")
         articles = myCursor.fetchall()
         for i in articles:
             print(f"\nItem number: {i[0]}, brand:{i[1]}, model:{i[2]}, type:{i[3]}, price:{i[4]}, quantity: {i[5]}, size: {i[6]}")
-    
+        return articles
     except Exception as e:
         print("\nSomething went wrong! Couldn't read articles")
         print(e)

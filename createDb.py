@@ -87,6 +87,8 @@ try:
     query = "INSERT INTO Employee (userName, password, email) VALUES (%s, %s, %s)"
     vals = [("admin1", "admin1123", "admin1@gmail.com"),
         ("admin2", "admin2123", "admin2@gmail.com"),
+        ("a", "a", "a"),
+        ("s", "s", "s"),
         ("admin3", "admin3123", "admin3@gmail.com")]
 
     myCursor.executemany(query, vals)
@@ -104,6 +106,8 @@ try:
     query = "INSERT INTO Customer (userName, password, email, gender, money) VALUES (%s, %s, %s,%s, %s)"
     vals = [("customer1", "customer1123", "customer1@gmail.com", "M", 100.00),
         ("customer2", "customer2123", "customer2@gmail.com", "F", 123.45),
+        ("a", "a", "a", "a", 10),
+        ("s", "s", "s", "s", 1000),
         ("customer3", "customer3123", "customer3@gmail.com", "M", 212.33)]
 
     myCursor.executemany(query, vals)
