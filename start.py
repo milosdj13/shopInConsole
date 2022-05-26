@@ -1,4 +1,6 @@
 from createDb import *
+from matplotlib import pyplot as plt
+
 
 # ADD USERNAME AND PASSWORD IN createDb.py
 
@@ -62,6 +64,7 @@ def logInEmployee():
         userName = input("Username : ")
         password = input("Password : ")
         print("============================")
+
         try:
             # username is in [] because i need to pass list in SQL query 
             myCursor.execute("SELECT password FROM Employee WHERE userName = %s", [userName])
@@ -84,7 +87,7 @@ def logInEmployee():
 def employeeOptions():
     showEmployeeOptions()
     option = input("Pick option:  ")
-    while option not in ("1", "2", "3", "4", "5"):
+    while option not in ("1", "2", "3", "4", "5", "6"):
         print ("\n ERROR! You picked invalid option.")
         showEmployeeOptions()
         option = input("Pick valid option: ")
@@ -96,9 +99,10 @@ def showEmployeeOptions():
     print("\nType in number based off of what you want to do: ")
     print("  1 - Make new account for employee")
     print("  2 - Add new article")
-    print("  3 - Show graph")
-    print("  4 - Log out")
-    print("  5 - Exit program")
+    print("  3 - Show money per customer - Graph")
+    print("  4 - Change password")
+    print("  5 - Log out")
+    print("  6 - Exit program")
 
 
 
@@ -111,11 +115,13 @@ def pickedEmployee(picked):
     if picked == "2":
         addNewArticle()
     if picked == "3":
-        print("Show graph")
+        showGraph()
     if picked == "4":
+        changePassword("Employee")
+    if picked == "5":
         print("Logging out....")
         start()
-    if picked == "5":
+    if picked == "6":
         print("Exiting program....")
         exit()
         
@@ -165,6 +171,24 @@ def addNewArticle():
 
 
 
+def showGraph():
+    myCursor.execute("SELECT * FROM Customer")
+    customers = myCursor.fetchall()
+    userNames = []
+    banks = []
+
+    for i in customers:
+        userNames.append(i[1])
+        banks.append(i[5])
+
+    plt.bar(userNames, banks)
+    plt.xlabel('Username: ')
+    plt.ylabel('Money in bank: ')
+    plt.show()
+
+
+
+
 # ======================================   CUSTOMER    ================================================
 # ======================================   CUSTOMER    ================================================
 # ======================================   CUSTOMER    ================================================
@@ -183,8 +207,8 @@ def logInCustomer():
         userName = input("Username : ")
         password = input("Password : ")
         print("============================")
+
         try:
-            # username is in [] because i need to pass list in SQL query 
             myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
             passDb = myCursor.fetchone()
             if passDb[0] == password:
@@ -206,7 +230,7 @@ def logInCustomer():
 def customerOptions():
     showCustomerOptions()
     option = input("Pick option:  ")
-    while option not in ("1", "2", "3", "4", "5", "6"):
+    while option not in ("1", "2", "3", "4", "5", "6", "7"):
         print ("\n ERROR! You picked invalid option.")
         showCustomerOptions()
         option = input("Pick valid option: ")
@@ -220,8 +244,9 @@ def showCustomerOptions():
     print("  2 - Show my purchases")
     print("  3 - See my balance")
     print("  4 - Buy something")
-    print("  5 - Log out")
-    print("  6 - Exit program")
+    print("  5 - Change password")
+    print("  6 - Log out")
+    print("  7 - Exit program")
 
 
 
@@ -236,9 +261,11 @@ def pickedCustomer(picked):
     elif picked == "4":
         buySomething()
     elif picked == "5":
+        changePassword("Customer")
+    elif picked == "6":
         print("Logging out....")
         start()
-    elif picked == "6":
+    elif picked == "7":
         print("Exiting program....")
         exit()
         
@@ -254,7 +281,6 @@ def showMyPurchases():
         password = input("Password : ")
         print("============================")
         try:
-            # username is in [] because i need to pass list in SQL query 
             myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
             passDb = myCursor.fetchone()
             if passDb[0] == password:
@@ -275,7 +301,6 @@ def showMyPurchases():
 
 def getId(userName):
     try:
-        # username is in [] because i need to pass list in SQL query 
         myCursor.execute("SELECT id FROM Customer WHERE userName = %s", [userName])
         id = myCursor.fetchone()
         return id
@@ -294,8 +319,8 @@ def seeMyBalance():
         userName = input("Username : ")
         password = input("Password : ")
         print("============================")
+
         try:
-            # username is in [] because i need to pass list in SQL query 
             myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
             passDb = myCursor.fetchone()
             if passDb[0] == password:
@@ -339,6 +364,7 @@ def makePurchase(option):
         userName = input("Username : ")
         password = input("Password : ")
         print("============================")
+
         try:
             myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
             passDb = myCursor.fetchone()
@@ -371,6 +397,7 @@ def updateTables(article, user):
     elif int(article[5]) < 1:
         print("Sorry, currently no items in storage!")
     else:
+
         try:
             quan = article[5]
             idArticle=article[0]
@@ -409,6 +436,7 @@ def createAccCustomer():
     email = input("Email : ")
     gender = input("Gender: ")
     money = input("How much money do you want to put on your account: ")
+
     try:
         query ="INSERT INTO Customer(userName, password, email, gender, money) VALUES (%s,%s,%s,%s,%s)"
         queryVals = (userName, password, email, gender, money)
@@ -433,6 +461,62 @@ def showArticles():
         print("\nSomething went wrong! Couldn't read articles")
         print(e)
 
+
+
+
+def changePassword(person):
+    print("Please confirm your username and password!")
+    isFound = False
+    while (isFound == False):
+        userName = input("Username : ")
+        password = input("Password : ")
+        print("============================")
+        print(person)
+        try:
+            if person.lower() == "Customer":
+                myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
+                passDb = myCursor.fetchone()
+                if passDb[0] == password:
+                    isFound = True
+                    print("\nAuthentification confirmed! Please insert new password ")
+                    newPassword = input("New password : ")
+                    confirmPassword = input("Confirm new password : ") 
+
+                    if  newPassword == confirmPassword:
+                        query ="UPDATE Customer SET password = %s WHERE userName = %s"
+                        queryVals = (newPassword, userName)
+                        myCursor.execute(query, queryVals)
+                        db1.commit()                                              
+                        print("Password succesfully changed! Redirecting you to the starting menu....")
+                    else:
+                        print("Passwords are not the same!")
+                else:
+                    print("\nWrong username/password! Try again!")
+            else:
+                myCursor.execute("SELECT password FROM Employee WHERE userName = %s", [userName])
+                # myCursor.execute("SELECT * FROM Customer WHERE userName = %s", [userName])
+                passDb = myCursor.fetchone()
+                if passDb[0] == password:
+                    isFound = True
+                    print("\nAuthentification confirmed! Please insert new password ")
+                    newPassword = input("New password : ")
+                    confirmPassword = input("Confirm new password : ") 
+
+                    if newPassword == confirmPassword:
+                        query ="UPDATE Employee SET password = %s WHERE userName = %s"
+                        queryVals = (newPassword, userName)
+                        myCursor.execute(query, queryVals)
+                        db1.commit()
+                        print("Password succesfully changed! Redirecting you to the starting menu....")
+                    else:
+                        print("Passwords are not the same!")
+                    
+                else:
+                    print("\nWrong username/password! Try again!")
+        
+        except Exception as e:
+            print("\nSorry, something went wrong!")
+            print(e)
 
 
 
