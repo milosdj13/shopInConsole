@@ -473,7 +473,7 @@ def changePassword(person):
         print("============================")
         print(person)
         try:
-            if person.lower() == "Customer":
+            if person == "Customer":
                 myCursor.execute("SELECT password FROM Customer WHERE userName = %s", [userName])
                 passDb = myCursor.fetchone()
                 if passDb[0] == password:
@@ -487,9 +487,9 @@ def changePassword(person):
                         queryVals = (newPassword, userName)
                         myCursor.execute(query, queryVals)
                         db1.commit()                                              
-                        print("Password succesfully changed! Redirecting you to the starting menu....")
+                        print("\nPassword succesfully changed! Redirecting you to the starting menu....")
                     else:
-                        print("Passwords are not the same!")
+                        print("\nPasswords are not the same!")
                 else:
                     print("\nWrong username/password! Try again!")
             else:
