@@ -7,7 +7,6 @@ from matplotlib import pyplot as plt
 
 
 
-
 def start():
     print ("\n\n Welcome to our shop!:")
     print("==========================")
