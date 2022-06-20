@@ -157,16 +157,35 @@ def addNewArticle():
     quantity = input("Quantity : ")
     size = input("Size : ")
 
-    try:
-        query ="INSERT INTO Article(brand, model, type, price, quantity, size) VALUES (%s,%s,%s,%s,%s,%s)"
-        queryVals = (brand, model, type, price, quantity, size)
-        
-        myCursor.execute(query, queryVals)
-        db1.commit()
-        print(" Article successfully added!")
-    except Exception as e:
-        print("\nSomething went wrong! Couldn't add new article!")
-        print(e)
+
+    foundID = 0
+    myCursor.execute("SELECT * FROM Article")
+    items = myCursor.fetchall()
+    for i in items:
+        if i[1] == brand and i[2] == model and i[3] == type and i[4] == int(price) and i[6] == size:
+            foundID = i[0]
+            quantity= int(quantity) + i[5]
+
+
+    if foundID>0:
+        try:
+            myCursor.execute("UPDATE Article SET quantity=%s WHERE id=%s", (quantity, foundID))
+            db1.commit()
+            print(" Added article into existing one!")
+        except Exception as e:
+            print('Cant add to existing article!')
+            print(e)
+    else:
+        try:
+            query ="INSERT INTO Article(brand, model, type, price, quantity, size) VALUES (%s,%s,%s,%s,%s,%s)"
+            queryVals = (brand, model, type, price, quantity, size)
+            
+            myCursor.execute(query, queryVals)
+            db1.commit()
+            print(" Article successfully added!")
+        except Exception as e:
+            print("\nSomething went wrong! Couldn't add new article!")
+            print(e)
 
 
 
