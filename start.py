@@ -2,7 +2,7 @@ from createDb import *
 from matplotlib import pyplot as plt
 
 
-# ADD USERNAME AND PASSWORD IN createDb.py
+# Add USERNAME and PASSWORD for MYSQL in createDb.py
 
 
 
@@ -359,9 +359,9 @@ def seeMyBalance():
 
 def buySomething():
     print("\n\nThis is the list of our available articles: ")
-    articles =showArticles()
-    option = input(" Enter the number of the article you want to buy: ")
-
+    articles = showArticles()
+    option = input(" Pick the article you want to buy: ")
+    
     while int(option) not in range(1, len(articles)+1):
         print ("\n ERROR! You picked invalid option.")
         showArticles()
@@ -390,14 +390,23 @@ def makePurchase(option):
                 isFound = True
                 print("\nAuthentification confirmed! We are looking for article and then we will make a bill... ")
                 
-                
-                myCursor.execute("SELECT * FROM Article WHERE id = %s", [option])
-                article = myCursor.fetchone()
-
                 myCursor.execute("SELECT * FROM Customer WHERE userName = %s", [userName])
                 user = myCursor.fetchone()
 
-                updateTables(article, user)
+                myCursor.execute("SELECT * FROM Article WHERE id = %s", [option])
+                article = myCursor.fetchone()
+
+
+                number = input(" How many of these articles you want to buy?: ")
+                if article[5] > 0:
+
+                    while int(number) not in range(1, article[5]):
+                        print ("\n ERROR! You picked invalid number of articles!")
+                        number = input("Pick valid number that is between 1 and %s: ", article[5])
+                    
+                    updateTables(article, user, number)
+                else:
+                    print("Sorry, currently no items in storage!")
             else:
                 print("\nWrong username/password! Try again!")
         except Exception as e:
@@ -409,7 +418,7 @@ def makePurchase(option):
 
 
 
-def updateTables(article, user):
+def updateTables(article, user, number):
     if int(article[4]) > int(user[5]):
         print("YOU DONT HAVE ENOUGH FUNDS FOR THIS TRANSACTION!")
     elif int(article[5]) < 1:
@@ -417,18 +426,19 @@ def updateTables(article, user):
     else:
 
         try:
-            quan = article[5]
+            number = int(number)
+            quan = int(article[5])
             idArticle=article[0]
-            myCursor.execute("UPDATE Article SET quantity=%s WHERE id = %s", (quan-1, idArticle))
+            myCursor.execute("UPDATE Article SET quantity=%s WHERE id = %s", (quan-number, idArticle))
             db1.commit()
 
-            money = user[5] - article[4]
+            money = int(user[5]) - int(article[4])*number
             idUser = user[0]
             myCursor.execute("UPDATE Customer SET money='%s' WHERE id = %s", (money, idUser))
             db1.commit()
 
-            query = "INSERT INTO Bill (totalPrice, customerId, articleId) VALUES (%s, %s, %s)"
-            vals = (article[4], user[0], article[0])
+            query = "INSERT INTO Bill (totalPrice, customerId, articleId, quantity) VALUES (%s, %s, %s, %s)"
+            vals = (int(article[4])*number, user[0], article[0], number)
 
             myCursor.execute(query, vals)
             db1.commit()

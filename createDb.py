@@ -70,7 +70,7 @@ except Exception as e:
 
 # Bill
 try:
-    myCursor.execute("CREATE TABLE Bill (id INT AUTO_INCREMENT PRIMARY KEY, totalPrice DOUBLE NOT NULL, customerId INT NOT NULL, articleId INT NOT NULL , FOREIGN KEY (customerId) REFERENCES Customer(id), FOREIGN KEY (articleId)REFERENCES Article(id))")
+    myCursor.execute("CREATE TABLE Bill (id INT AUTO_INCREMENT PRIMARY KEY, totalPrice DOUBLE NOT NULL, customerId INT NOT NULL, articleId INT NOT NULL , quantity INT NOT NULL,  FOREIGN KEY (customerId) REFERENCES Customer(id), FOREIGN KEY (articleId)REFERENCES Article(id))")
     print("\nTable Bill created!")
 except Exception as e:
     print("\nFailed to create Bill table in database")
@@ -139,10 +139,10 @@ except Exception as e:
 
 # Bill
 try:
-    query = "INSERT INTO Bill (totalPrice, customerId, articleId) VALUES (%s, %s, %s)"
-    vals = [(300, 2, 3),
-        ( 200, 1, 1),
-        (400, 3, 2)]
+    query = "INSERT INTO Bill (totalPrice, customerId, articleId, quantity) VALUES (%s, %s, %s, %s)"
+    vals = [(300, 2, 3, 1),
+        ( 200, 1, 1, 1),
+        (400, 3, 2, 1)]
 
     myCursor.executemany(query, vals)
     db1.commit()
