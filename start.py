@@ -462,12 +462,12 @@ def createAccCustomer():
     userName = input("Username : ")
     password = input("Password : ")
     email = input("Email : ")
-    gender = input("Gender: ")
+    age = input("Age: ")
     money = input("How much money do you want to put on your account: ")
 
     try:
-        query ="INSERT INTO Customer(userName, password, email, gender, money) VALUES (%s,%s,%s,%s,%s)"
-        queryVals = (userName, password, email, gender, money)
+        query ="INSERT INTO Customer(userName, password, email, age, money) VALUES (%s,%s,%s,%s,%s)"
+        queryVals = (userName, password, email, age, money)
         myCursor.execute(query, queryVals)
         db1.commit()
         print(userName + " account successfully made!")

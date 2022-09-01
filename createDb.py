@@ -54,7 +54,7 @@ except Exception as e:
 
 # Customer
 try:
-    myCursor.execute("CREATE TABLE Customer (id INT AUTO_INCREMENT PRIMARY KEY, userName VARCHAR(50) NOT NULL UNIQUE, password VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL UNIQUE, gender VARCHAR(50), money DOUBLE)")
+    myCursor.execute("CREATE TABLE Customer (id INT AUTO_INCREMENT PRIMARY KEY, userName VARCHAR(50) NOT NULL UNIQUE, password VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL UNIQUE, age INT NOT NULL, money DOUBLE)")
     print("\nTable Customer created!")
 except Exception as e:
     print("\nFailed to create Customer table in database")
@@ -103,12 +103,12 @@ except Exception as e:
 
 # Customer
 try:
-    query = "INSERT INTO Customer (userName, password, email, gender, money) VALUES (%s, %s, %s,%s, %s)"
-    vals = [("customer1", "customer1123", "customer1@gmail.com", "M", 100.00),
-        ("customer2", "customer2123", "customer2@gmail.com", "F", 123.45),
-        ("a", "a", "a", "a", 10),
-        ("s", "s", "s", "s", 1000),
-        ("customer3", "customer3123", "customer3@gmail.com", "M", 212.33)]
+    query = "INSERT INTO Customer (userName, password, email, age, money) VALUES (%s, %s, %s,%s, %s)"
+    vals = [("customer1", "customer1123", "customer1@gmail.com", 22, 100.00),
+        ("customer2", "customer2123", "customer2@gmail.com", 25, 123.45),
+        ("a", "a", "a", 28, 10),
+        ("s", "s", "s", 31, 1000),
+        ("customer3", "customer3123", "customer3@gmail.com", 20, 212.33)]
 
     myCursor.executemany(query, vals)
     db1.commit()
